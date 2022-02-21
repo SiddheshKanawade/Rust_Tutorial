@@ -2,9 +2,15 @@
 // mod vars;
 // mod types;
 // mod string;
-mod tuples;
+// mod tuples;
+// mod arrays;
+// mod vectors;
+// mod conditions;
+// mod loops;
+// mod functions;
+mod pointer_ref;
 
 fn main() {
 
-    tuples::run();
+    pointer_ref::run();
 }

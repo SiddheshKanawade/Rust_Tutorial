@@ -1,4 +1,4 @@
-// Primitive str = Immutable fixed-length string somewhere in memory
+// Primitive str = Immutable fixed-length string somewhere in memory, same datatype(char)
 // String = Growable, heap-allocated data structure - Use when you need to modify or own string data
 
 
