@@ -1,8 +1,10 @@
 // mod print; // calling print.rs file
 // mod vars;
-mod types;
+// mod types;
+// mod string;
+mod tuples;
 
 fn main() {
 
-    types::run();
+    tuples::run();
 }

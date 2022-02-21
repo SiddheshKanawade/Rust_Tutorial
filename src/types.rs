@@ -29,7 +29,7 @@ pub fn run() {
     // Get boolean from expression, also we can explicitly mention the bool keyword
     let is_greater: bool = 10 < 5;
     let a1 = 'a'; // only one charactor
-    let face = '\u{1F600}';
+    let face = '\u{1F600}'; //unicodes
 
     println!("{:?}", (x, y, z, is_active, is_greater, a1, face));
 
