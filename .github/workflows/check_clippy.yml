@@ -1,0 +1,168 @@
+name: Check Code
+
+on:
+  pull_request: 
+  push:
+    branches:
+      - '*'
+      - '!staging.tmp'
+    tags:
+      - '*'
+
+jobs:
+  test:
+    name: "CI Tests"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        rust: [nightly, beta, stable]
+
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v3
+
+      - name: Install Rust toolchain ${{ matrix.rust }}
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain:  ${{ matrix.rust }}
+          components: rustfmt, clippy
+          override: true
+
+      - name: Install wasm32-unknown-unknown for ${{ matrix.rust }}
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: wasm32-unknown-unknown
+          override: true
+      
+       - name: Install GNU tar
+        if: matrix.os == 'macOS-latest'
+        run: |
+          brew install gnu-tar
+          echo PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH" >> $GITHUB_ENV
+
+      - name: Generate test secret key
+        shell: sh
+        run: |
+          mv src/secret.key.sample src/secret.key
+        working-directory: actix-middleware-example
+
+      - name: Cache cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ matrix.os }}-${{ matrix.rust }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}-${{ secrets.CACHE_VERSION }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ matrix.os }}-${{ matrix.rust }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}-${{ secrets.CACHE_VERSION }}
+
+      - name: Cache cargo build
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ matrix.os }}-${{ matrix.rust }}-cargo-build-target-${{ hashFiles('**/Cargo.toml') }}-${{ secrets.CACHE_VERSION }}
+
+      - name: Release build async-std
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --no-default-features --features runtime-async-std,cached,glob,ip,watcher,logging,incremental,explain
+
+      - name: Release build tokio
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --no-default-features --features runtime-tokio,cached,glob,ip,watcher,logging,incremental,explain
+
+      - name: Cargo Test For All Features Using async-std
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --no-default-features --features runtime-async-std,amortized,cached,glob,ip,watcher,logging,incremental,explain
+
+      - name: Cargo Test For All Features Using tokio
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --no-default-features --features runtime-tokio,amortized,cached,glob,ip,watcher,logging,incremental,explain
+
+      - name: Cargo Check Wasm
+        uses: actions-rs/cargo@v1
+        with:
+          command:  check
+          args: --target wasm32-unknown-unknown --no-default-features --features runtime-async-std,amortized,cached,glob,ip,watcher,logging,incremental
+
+
+      - name: "Check Rust Version"
+        run: |
+          rustc --version
+          cargo --version
+
+      # - name: "Build"
+      #   run: |
+      #     cargo check --all
+      #     cargo test --all --no-fail-fast
+
+  check_formatting:
+    name: "Check Formatting"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+       
+
+    steps:
+    - name: "Checkout Repository"
+      uses: actions/checkout@v3
+
+    - name: Install GNU tar
+        if: matrix.os == 'macOS-latest'
+        run: |
+          brew install gnu-tar
+          echo PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH" >> $GITHUB_ENV
+
+    - name: "Use the latest Rust stable with rustfmt"
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+          profile: minimal
+          components: rustfmt
+          override: true
+    - run: cargo fmt --all -- --check
+
+  check_clippy:
+    name: "Check Clippy"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    
+    steps:
+    - name: "Checkout Repository"
+      uses: actions/checkout@v3
+
+    - name: Install GNU tar
+        if: matrix.os == 'macOS-latest'
+        run: |
+          brew install gnu-tar
+          echo PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH" >> $GITHUB_ENV
+
+    - name: Generate test secret key
+      shell: sh
+      run: |
+        mv src/secret.key.sample src/secret.key
+      working-directory: actix-middleware-example
+
+    - name: "Use the latest Rust stable with clippy"
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+          profile: minimal
+          components: clippy
+          override: true
+    - run: cargo clippy -- -D warnings
