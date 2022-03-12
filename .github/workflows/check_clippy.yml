@@ -27,11 +27,11 @@ jobs:
     #     mv src/secret.key.sample src/secret.key
     #   working-directory: actix-middleware-example
     
-    # - name: Install GNU tar
-    #     if: matrix.os == 'macOS-latest'
-    #     run: |
-    #       brew install gnu-tar
-    #       echo PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH" >> $GITHUB_ENV
+    - name: Install GNU tar
+        if: matrix.os == 'macOS-latest'
+        run: |
+          brew install gnu-tar
+          echo PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH" >> $GITHUB_ENV
 
     - name: "Print Rust Version"
       run: |
@@ -62,12 +62,6 @@ jobs:
           components: rustfmt
           override: true
     - run: cargo fmt --all -- --check
-
-    - name: Install GNU tar
-        if: matrix.os == 'macOS-latest'
-        run: |
-          brew install gnu-tar
-          echo PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH" >> $GITHUB_ENV
 
   check_clippy:
     name: "Check Clippy"
