@@ -63,6 +63,12 @@ jobs:
           override: true
     - run: cargo fmt --all -- --check
 
+    - name: Install GNU tar
+        if: matrix.os == 'macOS-latest'
+        run: |
+          brew install gnu-tar
+          echo PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH" >> $GITHUB_ENV
+
   check_clippy:
     name: "Check Clippy"
     runs-on: ${{ matrix.os }}
