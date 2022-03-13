@@ -57,6 +57,26 @@ jobs:
           override: true
     - run: cargo fmt --all -- --check
 
+check_cache:
+    name: "Check Cache"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    
+    steps:
+    - name: "Checkout Repository"
+      uses: actions/checkout@v2
+
+    - name: "Use Rust stable"
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+          profile: minimal
+  
+    - name: "Check rust_cache"
+      uses: Swatinem/rust-cache@v1 
+      
   check_clippy:
     name: "Check Clippy"
     runs-on: ${{ matrix.os }}
@@ -83,23 +103,4 @@ jobs:
           override: true
     - run: cargo clippy -- -D warnings
   
-  check_cache:
-    name: "Check Cache"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-    
-    steps:
-    - name: "Checkout Repository"
-      uses: actions/checkout@v2
-
-    - name: "Use Rust stable"
-      uses: actions-rs/toolchain@v1
-      with:
-          toolchain: stable
-          profile: minimal
   
-    - name: "Check rust_cache"
-      uses: Swatinem/rust-cache@v1 
-      
