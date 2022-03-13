@@ -57,26 +57,37 @@ jobs:
           override: true
     - run: cargo fmt --all -- --check
 
-check_cache:
-    name: "Check Cache"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+# check_cache:
+#     name: "Check Cache"
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest, windows-latest, macOS-latest]
     
-    steps:
-    - name: "Checkout Repository"
-      uses: actions/checkout@v2
+#     steps:
+#     - name: "Checkout Repository"
+#       uses: actions/checkout@v2
 
-    - name: "Use Rust stable"
-      uses: actions-rs/toolchain@v1
-      with:
-          toolchain: stable
-          profile: minimal
+#     - name: "Use Rust stable"
+#       uses: actions-rs/toolchain@v1
+#       with:
+#           toolchain: stable
+#           profile: minimal
   
-    - name: "Check rust_cache"
-      uses: Swatinem/rust-cache@v1 
-      
+#     - name: "Check rust_cache"
+#       uses: Swatinem/rust-cache@v1 
+  check_cache:
+    - uses: actions/checkout@v2
+
+    # selecting a toolchain either by action or manual `rustup` calls should happen
+    # before the plugin, as it uses the current rustc version as its cache key
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+
+    - uses: Swatinem/rust-cache@v1
+
   check_clippy:
     name: "Check Clippy"
     runs-on: ${{ matrix.os }}
