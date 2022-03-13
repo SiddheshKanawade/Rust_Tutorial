@@ -55,8 +55,15 @@ jobs:
           profile: minimal
   
     - name: "Check rust_cache"
-      uses: Swatinem/rust-cache@v1 
-      # key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
     
   check_formatting:
     name: "Check Formatting"
