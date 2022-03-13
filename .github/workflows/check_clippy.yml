@@ -27,6 +27,15 @@ jobs:
     #     mv src/secret.key.sample src/secret.key
     #   working-directory: actix-middleware-example
 
+    - name: "Use Rust stable"
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+          profile: minimal
+
+    - name: "Check rust_cache"
+      uses: Swatinem/rust-cache@v1 
+
     - name: "Print Rust Version"
       run: |
         rustc -Vv
@@ -37,25 +46,6 @@ jobs:
         cargo check --all
         cargo test --all --no-fail-fast
 
-  check_cache:
-    name: "Check Cache"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-    
-    steps:
-    - name: "Checkout Repository"
-      uses: actions/checkout@v2
-
-    - name: "Use Rust stable"
-      uses: actions-rs/toolchain@v1
-      with:
-          toolchain: stable
-          profile: minimal
-  
-    - name: "Check rust_cache"
-      uses: Swatinem/rust-cache@v1 
     
   check_formatting:
     name: "Check Formatting"
