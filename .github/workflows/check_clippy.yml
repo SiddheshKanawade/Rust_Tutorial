@@ -32,10 +32,10 @@ jobs:
       with:
           toolchain: stable
           profile: minimal
-
+  
     - name: "Check rust_cache"
       uses: Swatinem/rust-cache@v1 
-
+  
     - name: "Print Rust Version"
       run: |
         rustc -Vv
@@ -46,6 +46,7 @@ jobs:
         cargo check --all
         cargo test --all --no-fail-fast
 
+  
     
   check_formatting:
     name: "Check Formatting"
