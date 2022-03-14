@@ -10,87 +10,108 @@ on:
       - '*'
 
 jobs:
-  test:
-    name: "Test"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-
+  build_and_test:
+    name: Build & test
+    runs-on: ubuntu-latest
     steps:
-    - name: "Checkout Repository"
-      uses: actions/checkout@v1
-  
-    # - name: Generate test secret key
-    #   shell: sh
-    #   run: |
-    #     mv src/secret.key.sample src/secret.key
-    #   working-directory: actix-middleware-example
+      - name: Checkout
+        uses: actions/checkout@v1
 
-    - name: "Use Rust stable"
-      uses: actions-rs/toolchain@v1
-      with:
-          toolchain: stable
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
           profile: minimal
+          toolchain: stable
+
+      - uses: Swatinem/rust-cache@v1
+      
+      - name: Cargo build & test
+        run: |
+          cargo build
+          cargo test
+
+# jobs:
+#   test:
+#     name: "Test"
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest, windows-latest, macOS-latest]
+
+#     steps:
+#     - name: "Checkout Repository"
+#       uses: actions/checkout@v1
   
-    - name: "Check rust_cache"
-      uses: Swatinem/rust-cache@v1 
+#     # - name: Generate test secret key
+#     #   shell: sh
+#     #   run: |
+#     #     mv src/secret.key.sample src/secret.key
+#     #   working-directory: actix-middleware-example
+
+#     - name: "Use Rust stable"
+#       uses: actions-rs/toolchain@v1
+#       with:
+#           toolchain: stable
+#           profile: minimal
   
-    - name: "Print Rust Version"
-      run: |
-        rustc -Vv
-        cargo -Vv
+#     - name: "Check rust_cache"
+#       uses: Swatinem/rust-cache@v1 
+  
+#     - name: "Print Rust Version"
+#       run: |
+#         rustc -Vv
+#         cargo -Vv
     
-    - name: "Build"
-      run: |
-        cargo check --all
-        cargo test --all --no-fail-fast
+#     - name: "Build"
+#       run: |
+#         cargo check --all
+#         cargo test --all --no-fail-fast
 
   
     
-  check_formatting:
-    name: "Check Formatting"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+#   check_formatting:
+#     name: "Check Formatting"
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest, windows-latest, macOS-latest]
   
-    steps:
-    - name: "Checkout Repository"
-      uses: actions/checkout@v1
+#     steps:
+#     - name: "Checkout Repository"
+#       uses: actions/checkout@v1
 
-    - name: "Use the latest Rust stable with rustfmt"
-      uses: actions-rs/toolchain@v1
-      with:
-          toolchain: stable
-          profile: minimal
-          components: rustfmt
-          override: true
-    - run: cargo fmt --all -- --check
+#     - name: "Use the latest Rust stable with rustfmt"
+#       uses: actions-rs/toolchain@v1
+#       with:
+#           toolchain: stable
+#           profile: minimal
+#           components: rustfmt
+#           override: true
+#     - run: cargo fmt --all -- --check
 
-  check_clippy:
-    name: "Check Clippy"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+#   check_clippy:
+#     name: "Check Clippy"
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest, windows-latest, macOS-latest]
 
-    steps:
-    - name: "Checkout Repository"
-      uses: actions/checkout@v1
+#     steps:
+#     - name: "Checkout Repository"
+#       uses: actions/checkout@v1
 
-    # - name: Generate test secret key
-    #   shell: sh
-    #   run: |
-    #     mv src/secret.key.sample src/secret.key
-    #   working-directory: actix-middleware-example
+#     # - name: Generate test secret key
+#     #   shell: sh
+#     #   run: |
+#     #     mv src/secret.key.sample src/secret.key
+#     #   working-directory: actix-middleware-example
 
-    - name: "Use the latest Rust stable with clippy"
-      uses: actions-rs/toolchain@v1
-      with:
-          toolchain: stable
-          profile: minimal
-          components: clippy
-          override: true
-    - run: cargo clippy -- -D warnings
+#     - name: "Use the latest Rust stable with clippy"
+#       uses: actions-rs/toolchain@v1
+#       with:
+#           toolchain: stable
+#           profile: minimal
+#           components: clippy
+#           override: true
+#     - run: cargo clippy -- -D warnings
   
