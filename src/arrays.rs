@@ -5,7 +5,7 @@ use std::mem;
 pub fn run() {
     let mut numbers: [i32; 5] = [1, 2, 3, 4, 5];
 
-    // Re-assign a value
+    // Re-assign value
     numbers[0] = 21;
 
     // Get Array length
