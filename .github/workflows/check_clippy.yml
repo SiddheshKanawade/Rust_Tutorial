@@ -23,7 +23,7 @@ jobs:
   
     - name: "Check rust_cache"
       uses: Swatinem/rust-cache@v1
-      working-directory: RUST_TUTORIAL
+      target-dir: ./target
   
     # - name: Generate test secret key
     #   shell: sh
