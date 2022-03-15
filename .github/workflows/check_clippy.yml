@@ -19,21 +19,10 @@ jobs:
 
     steps:
     - name: "Checkout Repository"
-      uses: actions/checkout@v2
-      
-    - name: "Use Rust stable"
-      uses: actions-rs/toolchain@v1
-      with:
-          toolchain: stable
-          profile: minimal
+      uses: actions/checkout@v1
   
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    - name: "Check rust_cache"
+      uses: Swatinem/rust-cache@v1 
   
     - name: Generate test secret key
       shell: sh
