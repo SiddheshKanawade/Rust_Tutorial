@@ -22,13 +22,14 @@ jobs:
       uses: actions/checkout@v1
   
     - name: "Check rust_cache"
-      uses: Swatinem/rust-cache@v1 
+      uses: Swatinem/rust-cache@v1
+        working-directory: RUST_TUTORIAL
   
-    - name: Generate test secret key
-      shell: sh
-      run: |
-        mv src/secret.key.sample src/secret.key
-      working-directory: actix-middleware-example
+    # - name: Generate test secret key
+    #   shell: sh
+    #   run: |
+    #     mv src/secret.key.sample src/secret.key
+    #   working-directory: actix-middleware-example
 
     - name: "Print Rust Version"
       run: |
@@ -71,11 +72,11 @@ jobs:
     - name: "Checkout Repository"
       uses: actions/checkout@v1
 
-    - name: Generate test secret key
-      shell: sh
-      run: |
-        mv src/secret.key.sample src/secret.key
-      working-directory: actix-middleware-example
+    # - name: Generate test secret key
+    #   shell: sh
+    #   run: |
+    #     mv src/secret.key.sample src/secret.key
+    #   working-directory: actix-middleware-example
 
     - name: "Use the latest Rust stable with clippy"
       uses: actions-rs/toolchain@v1
